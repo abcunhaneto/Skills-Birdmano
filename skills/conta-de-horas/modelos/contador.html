@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Horas devolvidas</title>
+<style>
+:root{--bg:#F2F3F5;--card:#fff;--ink:#0B1A2E;--ink2:#5E6878;--fio:#E1E4E9;--marca:#F5E51F;--ok:#18A058}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);display:flex;justify-content:center;padding:32px 16px}
+.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--fio);border-radius:18px;padding:22px}
+.rot{display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2)}
+.rot i{font-style:normal;color:var(--ok)}
+.num{font-size:60px;font-weight:650;letter-spacing:-.05em;margin-top:14px;font-variant-numeric:tabular-nums}
+.num b{background:linear-gradient(transparent 64%,var(--marca) 64%,var(--marca) 90%,transparent 90%)}
+.num small{font-size:22px;letter-spacing:0}
+.ms{color:var(--ink2);font-size:13px;font-variant-numeric:tabular-nums}
+ul{list-style:none;margin-top:18px;border-top:1px solid var(--fio)}
+li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--fio);font-size:14px}
+li span{color:var(--ink2);font-size:12.5px;display:block}
+li em{font-style:normal;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="rot">Horas devolvidas <i>● ao vivo</i></div>
+  <p class="num"><b id="h">0</b><small> h</small></p>
+  <p class="ms" id="ms"></p>
+  <ul id="lista"></ul>
+</div>
+<script>
+/* PREENCHA AQUI. Cada sistema tem uma ou mais fases:
+   [início "AAAA-MM-DD", fim "AAAA-MM-DD" ou null se ainda em uso, horas devolvidas por semana] */
+var SISTEMAS=[
+  {nome:"Exemplo: conferência de notas", detalhe:"2 pessoas × 4 h/dia → 20 min", fases:[["2026-01-05",null,36.7]]}
+];
+var FUSO="-03:00";
+function t(s){return new Date(s+"T00:00:00"+FUSO).getTime()}
+var fmt=new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0});
+function z(n){return(n<10?"0":"")+n}
+function horas(f,agora){var x=0;f.forEach(function(p){var a=t(p[0]),b=Math.min(p[1]?t(p[1]):agora,agora);if(b>a)x+=(b-a)/36e5*p[2]/168});return x}
+var ul=document.getElementById("lista");
+SISTEMAS.forEach(function(s,i){var li=document.createElement("li");li.innerHTML="<div>"+s.nome+"<span>"+s.detalhe+"</span></div><em id='s"+i+"'></em>";ul.appendChild(li)});
+function tic(){var n=Date.now(),tot=0;SISTEMAS.forEach(function(s,i){var v=horas(s.fases,n);tot+=v;document.getElementById("s"+i).textContent=fmt.format(Math.floor(v))+" h"});
+  var h=Math.floor(tot),r=(tot-h)*3600;document.getElementById("h").textContent=fmt.format(h);document.getElementById("ms").textContent=z(Math.floor(r/60))+" min "+z(Math.floor(r%60))+" s"}
+tic();setInterval(tic,1000);
+</script>
+</body>
+</html>
